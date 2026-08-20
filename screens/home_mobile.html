@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Atelier North Properties - Mobile Home</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&amp;family=Inter:wght@100..900&amp;family=Literata:ital,opsz,wght@0,7..72,200..900;1,7..72,200..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-container": "#5b675f",
+                        "tertiary-container": "#26241e",
+                        "surface-container-low": "#f5f3ed",
+                        "on-secondary-fixed-variant": "#3d4a42",
+                        "on-background": "#1b1c18",
+                        "on-secondary-fixed": "#121e17",
+                        "on-primary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed-dim": "#cbc6bd",
+                        "background": "#fbf9f3",
+                        "surface": "#fbf9f3",
+                        "primary-fixed": "#e5e2dd",
+                        "on-surface": "#1b1c18",
+                        "primary": "#0e0f0c",
+                        "primary-fixed-dim": "#c8c6c1",
+                        "secondary-fixed-dim": "#bccabf",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#dcdad4",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed": "#1d1b16",
+                        "surface-tint": "#5f5e5b",
+                        "outline": "#787770",
+                        "secondary": "#556159",
+                        "secondary-container": "#d8e6db",
+                        "inverse-surface": "#30312d",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-container": "#8f8b82",
+                        "error": "#ba1a1a",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-bright": "#fbf9f3",
+                        "outline-variant": "#c8c7be",
+                        "secondary-fixed": "#d8e6db",
+                        "surface-container": "#f0eee8",
+                        "inverse-primary": "#c8c6c1",
+                        "tertiary": "#100f09",
+                        "on-primary-fixed-variant": "#474743",
+                        "on-error": "#ffffff",
+                        "surface-container-highest": "#e4e2dc",
+                        "surface-container-high": "#eae8e2",
+                        "on-tertiary-fixed-variant": "#494640",
+                        "inverse-on-surface": "#f3f1eb",
+                        "on-primary-container": "#8c8b87",
+                        "tertiary-fixed": "#e8e2d8",
+                        "surface-variant": "#e4e2dc",
+                        "on-surface-variant": "#474741",
+                        "primary-container": "#242421",
+                        "on-primary-fixed": "#1c1c19"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "20px",
+                        "section-gap": "120px",
+                        "unit": "4px",
+                        "margin-desktop": "80px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Bodoni Moda"],
+                        "display-xl": ["Bodoni Moda"],
+                        "nav-link": ["Inter"],
+                        "headline-md": ["Bodoni Moda"],
+                        "display-lg-mobile": ["Bodoni Moda"],
+                        "label-caps": ["Inter"],
+                        "body-md": ["Literata"],
+                        "body-lg": ["Literata"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+                        "display-xl": ["72px", { "lineHeight": "80px", "letterSpacing": "-0.02em", "fontWeight": "400" }],
+                        "nav-link": ["13px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "400" }],
+                        "headline-md": ["32px", { "lineHeight": "40px", "fontWeight": "400" }],
+                        "display-lg-mobile": ["36px", { "lineHeight": "44px", "fontWeight": "400" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #fbf9f3;
+            color: #0e0f0c;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-surface text-primary antialiased flex flex-col min-h-screen font-body-md">
+<!-- Mobile Top Navigation -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 py-6 md:hidden mix-blend-difference text-white">
+<a class="font-label-caps text-label-caps uppercase tracking-widest opacity-80" href="#">
+            Menu
+        </a>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow md:hidden">
+<!-- Immersive Hero -->
+<section class="relative h-[100dvh] w-full mb-section-gap">
+<img class="absolute inset-0 w-full h-full object-cover" data-alt="A breathtaking, wide-angle architectural shot of a modern, minimalist luxury home interior. The scene features floor-to-ceiling glass windows overlooking a serene coastal landscape. Natural daylight floods the space, illuminating clean lines, premium materials like polished concrete floors, and curated minimalist furniture. The color palette is strictly neutral, focusing on off-whites, greys, and muted earthy tones, emphasizing the 'Quiet Luxury' and 'Editorial Architecture' aesthetic. The overall mood is tranquil, expansive, and highly sophisticated." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZIUiilwQOzpgfw60Sy31BUqXzWy56sdZYqPTm0tPA5PmCNmb1SSMlvztt5plge9M9shCr2co47j3bSbSohtX7PMy7WY5MRSa47qlLVWbiPcuG2qkZhRCExNHaklINa8pU3MuV7zpcUEFYpO38QtIClZa9xbBMlcLoRSQp76cxGnu6OnZ0NtK6IzrOwoC2zNGHTDLU4TeqAIXHw446dRN5NcFmkz-LAqgAWyfg9Iy2JuTbD_Zcx4BP"/>
+<div class="absolute inset-0 bg-black/20"></div>
+<div class="absolute inset-0 flex flex-col justify-between p-6 pb-12">
+<div class="flex justify-between items-start text-white opacity-80 mt-16">
+<div class="font-label-caps text-[10px] uppercase tracking-widest leading-relaxed">
+<p>Atelier North Properties</p>
+<p>Selected residences</p>
+</div>
+<div class="font-label-caps text-[10px] uppercase tracking-widest text-right leading-relaxed">
+<p>London / 51.5074° N</p>
+<p>enquiry@ateliernorth.com</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Featured Listings Sequence -->
+<section class="px-6 space-y-24 mb-32">
+<!-- Listing 1 -->
+<article class="flex flex-col group cursor-pointer">
+<div class="w-full aspect-[4/5] relative mb-6 overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A tightly cropped editorial photograph focusing on the rich textures of a luxury interior. The image highlights a section of heavily veined, dark green marble interacting with warm, natural oak wood grain and a subtle brushed brass accent. The lighting is soft and diffused, creating a serene, tactile atmosphere that perfectly embodies 'Quiet Luxury' and minimalist architectural detail. The color palette revolves around earthy greens, warm wood tones, and soft neutral backgrounds." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAw9vvGmAs81I-fuwRkc_Q8ip3ZR6K5db01y0n7saTnjg1gIIvt7P6Be0yV3eHLthAg-2GwASO_ElQzQKknD-Jvotb_wtpxphUVxi1wQ_1V8mjSn0QWTXSo2vROLx1IdyEX9RjiFJnwYwnajQ3kq0xHZgdNoY_xikup0F7Mid4Sb-Esqe-WQwhwOoQ57Fopj-zrz6CTGtU4xQUNT45Bs-qz_VwazEi_tjFmlcPjNJXDPSm8gFg4D-M"/>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-headline-md text-3xl text-primary mb-2">Brutalist Echo</h3>
+<p class="font-nav-link text-xs text-on-surface-variant uppercase tracking-widest">Cornwall Coast</p>
+</div>
+</div>
+</article>
+<!-- Listing 2 -->
+<article class="flex flex-col group cursor-pointer">
+<div class="w-[85%] aspect-[3/4] relative mb-6 overflow-hidden ml-auto">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A vertical, editorial-style photograph capturing a minimalist spiral staircase in a high-end contemporary home. The staircase is constructed from smooth, pale concrete with a slender, blackened steel handrail. Soft, directional natural light casts striking geometric shadows across the pristine white walls. The composition is asymmetrical and highly graphic, emphasizing structure and negative space typical of 'Editorial Architecture' design. Colors are restricted to pure whites, soft grays, and stark black accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5dzDywVYr-K0HhIW1jPVe0MEtBiOpqfKNvhuKhYn8uCiCyCw-auyCEdHoLYm5rqigvBwCc5PEI9gq1MWoYkDqibVu7DW0zptL4GxR6-YTqskQOCLIytukDGzb7CG4aQbuGoYRX61TWxO74NNi5U8ZsNiUNFy-WhYIziRraSqxvMiqXy70yrAc8HZ136uEVn30yzfD08NUt_pq3-o9vfOgTEyjHVsce7xqvNL4A-NZifUraJ-0Sku3"/>
+</div>
+<div class="flex justify-between items-start text-right flex-row-reverse w-[85%] ml-auto">
+<div class="text-left">
+<h3 class="font-headline-md text-3xl text-primary mb-2">The Gallery</h3>
+<p class="font-nav-link text-xs text-on-surface-variant uppercase tracking-widest">Mayfair, London</p>
+</div>
+</div>
+</article>
+<!-- Listing 3 -->
+<article class="flex flex-col group cursor-pointer">
+<div class="w-[90%] aspect-[4/3] relative mb-6 overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A wide, landscape photograph showing the exterior approach to a starkly modern, low-profile residence set against a rugged natural backdrop. The building features dark, charred timber cladding (Shou Sugi Ban) contrasting with expansive, frameless glazing. The setting is twilight, with warm light spilling from the interior onto a minimalist stone courtyard. The overall mood is dramatic yet restrained, embodying a sophisticated 'Quiet Luxury' approach to residential architecture. Color palette focuses on deep blacks, warm interior ambers, and cool twilight blues." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBr9MkDjuUFjdfm3ZdoT5mjArzN3dcffjwRxqVR8CvyjYVyPJthgUg4ZT3oy6GY1tFB3-4WYaekA2Vo724U9CvNfhJksNW1Nkb568R2hzj_YRoHYbqrucxe9Jw8FXTzhGQNBdNHhu3q2p9qPsx9yLb-9fT-rCj5K83ibxo926wCnVLvT-uJ_vtv_7kmzCbDPR9oSMIvmPLW3gI3TTLuBFPnHxc5q_NmDDxiE7M8y_1LRQ_pVQ2AmYIW"/>
+</div>
+<div class="flex flex-col items-start w-[90%]">
+<h3 class="font-headline-md text-3xl text-primary mb-2">Timber House</h3>
+<p class="font-nav-link text-xs text-on-surface-variant uppercase tracking-widest">Surrey Hills</p>
+</div>
+</article>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full px-6 py-16 flex flex-col items-center gap-8 md:hidden">
+<h2 class="font-display-lg-mobile text-display-lg-mobile text-primary text-center">Atelier North</h2>
+<div class="flex flex-col items-center gap-4 w-full">
+<a class="font-nav-link text-xs text-on-surface-variant uppercase tracking-widest hover:text-primary transition-colors" href="#">Office: London &amp; Cornwall</a>
+<a class="font-nav-link text-xs text-on-surface-variant uppercase tracking-widest hover:text-primary transition-colors" href="mailto:enquiries@ateliernorth.com">enquiries@ateliernorth.com</a>
+</div>
+<div class="flex gap-8 mt-4">
+<a class="font-nav-link text-xs text-on-surface-variant uppercase tracking-widest hover:text-primary transition-colors" href="#">Instagram</a>
+<a class="font-nav-link text-xs text-on-surface-variant uppercase tracking-widest hover:text-primary transition-colors" href="#">LinkedIn</a>
+</div>
+</footer>
+</body></html>

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Atelier North Properties - Listings Index</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&amp;family=Inter:wght@100..900&amp;family=Literata:ital,opsz,wght@0,7..72,200..900;1,7..72,200..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#fbf9f3",
+                        "secondary-fixed": "#d8e6db",
+                        "on-tertiary-container": "#8f8b82",
+                        "on-primary-fixed": "#1c1c19",
+                        "on-primary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed": "#e8e2d8",
+                        "primary-fixed-dim": "#c8c6c1",
+                        "on-secondary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "inverse-surface": "#30312d",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed": "#121e17",
+                        "on-tertiary-fixed-variant": "#494640",
+                        "surface-container-low": "#f5f3ed",
+                        "inverse-on-surface": "#f3f1eb",
+                        "tertiary": "#100f09",
+                        "surface-container-highest": "#e4e2dc",
+                        "error-container": "#ffdad6",
+                        "surface-tint": "#5f5e5b",
+                        "primary-container": "#242421",
+                        "surface-bright": "#fbf9f3",
+                        "secondary": "#556159",
+                        "primary-fixed": "#e5e2dd",
+                        "on-secondary-fixed-variant": "#3d4a42",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed": "#1d1b16",
+                        "on-primary-fixed-variant": "#474743",
+                        "secondary-container": "#d8e6db",
+                        "on-primary-container": "#8c8b87",
+                        "surface-container-high": "#eae8e2",
+                        "error": "#ba1a1a",
+                        "on-background": "#1b1c18",
+                        "on-secondary-container": "#5b675f",
+                        "outline-variant": "#c8c7be",
+                        "tertiary-container": "#26241e",
+                        "tertiary-fixed-dim": "#cbc6bd",
+                        "on-surface": "#1b1c18",
+                        "outline": "#787770",
+                        "surface-dim": "#dcdad4",
+                        "surface-variant": "#e4e2dc",
+                        "inverse-primary": "#c8c6c1",
+                        "primary": "#0e0f0c",
+                        "surface-container": "#f0eee8",
+                        "background": "#fbf9f3",
+                        "on-surface-variant": "#474741",
+                        "secondary-fixed-dim": "#bccabf"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "20px",
+                        "margin-desktop": "80px",
+                        "gutter": "24px",
+                        "section-gap": "120px",
+                        "unit": "4px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Bodoni Moda"],
+                        "body-lg": ["Literata"],
+                        "display-lg-mobile": ["Bodoni Moda"],
+                        "nav-link": ["Inter"],
+                        "headline-md": ["Bodoni Moda"],
+                        "body-md": ["Literata"],
+                        "label-caps": ["Inter"],
+                        "display-xl": ["Bodoni Moda"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "display-lg-mobile": ["36px", { "lineHeight": "44px", "fontWeight": "400" }],
+                        "nav-link": ["13px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "400" }],
+                        "headline-md": ["32px", { "lineHeight": "40px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "500" }],
+                        "display-xl": ["72px", { "lineHeight": "80px", "letterSpacing": "-0.02em", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: #fbf9f3; color: #1b1c18; -webkit-font-smoothing: antialiased; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24; }
+        /* Clean sharp borders */
+        * { border-color: #c8c7be; }
+    </style>
+</head>
+<body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen">
+<!-- TopNavBar -->
+<nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-desktop py-6 bg-surface/90 backdrop-blur-sm border-b border-outline-variant">
+<div class="font-display-lg text-headline-md tracking-tighter text-primary">Atelier North Properties / City + Coast</div>
+<div class="hidden md:flex space-x-gutter">
+<a class="font-nav-link text-nav-link uppercase tracking-widest text-primary border-b border-primary pb-1 cursor-pointer transition-opacity active:opacity-70" href="#">Listings</a>
+<a class="font-nav-link text-nav-link uppercase tracking-widest text-on-surface-variant hover:text-secondary transition-colors duration-300 pb-1 cursor-pointer transition-opacity active:opacity-70" href="#">Areas</a>
+<a class="font-nav-link text-nav-link uppercase tracking-widest text-on-surface-variant hover:text-secondary transition-colors duration-300 pb-1 cursor-pointer transition-opacity active:opacity-70" href="#">About</a>
+<a class="font-nav-link text-nav-link uppercase tracking-widest text-on-surface-variant hover:text-secondary transition-colors duration-300 pb-1 cursor-pointer transition-opacity active:opacity-70" href="#">Enquire</a>
+</div>
+<button class="md:hidden text-primary">
+<span class="material-symbols-outlined text-2xl">menu</span>
+</button>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-grow pt-32 pb-section-gap px-margin-mobile md:px-margin-desktop w-full max-w-[1440px] mx-auto">
+<!-- Header & Controls -->
+<header class="flex flex-col md:flex-row justify-between items-end mb-section-gap border-b border-outline-variant pb-8">
+<div class="max-w-2xl">
+<h1 class="font-display-xl text-display-xl text-primary mb-4">Curated Portfolio</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">A selection of exceptional architectural properties across city and coast.</p>
+</div>
+<!-- Density Selector -->
+<div class="flex items-center space-x-6 mt-8 md:mt-0">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">Density:</span>
+<div class="flex space-x-4">
+<button class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors pb-1 border-b border-transparent">Compact</button>
+<button class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors pb-1 border-b border-transparent">Standard</button>
+<button class="font-label-caps text-label-caps text-primary border-b border-primary pb-1">Immersive</button>
+</div>
+</div>
+</header>
+<!-- Immersive Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- 1. 'The Cliff House' - Wide landscape crop -->
+<article class="col-span-1 md:col-span-12 group cursor-pointer mb-section-gap">
+<div class="w-full h-[614px] md:h-[716px] mb-6 overflow-hidden bg-surface-dim border border-outline-variant rounded-none">
+<img class="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-700 ease-out" data-alt="A wide, sweeping landscape photograph of a stunning modern concrete cliff house perched precariously over a turbulent ocean. The light mode scene is illuminated by crisp, early morning white light. The architecture is sharp and brutalist, contrasting with the soft, muted blues of the water and sky. High-end editorial photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUMN9KReYjQIO0CoubRiovLYAOcyvGeQLOlLC-Nh18yad8vApIUgMnQRYBP27gPZmHoHU0LNHv3MeNIwqvO93fpA5E5kk84cQTv4nBXoRpqrvTNlyORC8Xdgz80B0pC4CBu5xfrt1TbgEOPgi65kV1rhv5rxet0DO_pHmgruk4oikfB1WynVziE4fR-XGjG4VTwqQmmZkKS7QXuY_sZuf48W-0Y-DCgbL1DurThhcNWwXNSr1WIBkq"/>
+</div>
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end">
+<div>
+<h2 class="font-headline-md text-headline-md text-primary mb-2">The Cliff House</h2>
+<p class="font-label-caps text-label-caps text-on-surface-variant tracking-widest uppercase">Cornwall Peninsula</p>
+</div>
+<div class="mt-4 md:mt-0 text-left md:text-right">
+<div class="font-body-lg text-body-lg text-primary mb-2">£4,250,000</div>
+<div class="font-label-caps text-label-caps text-on-surface-variant tracking-widest uppercase flex items-center space-x-4">
+<span>Available</span>
+<span class="w-1 h-1 bg-outline-variant rounded-full"></span>
+<span>4 Beds</span>
+<span class="w-1 h-1 bg-outline-variant rounded-full"></span>
+<span>3 Baths</span>
+<span class="w-1 h-1 bg-outline-variant rounded-full"></span>
+<span>3,200 Sq Ft</span>
+</div>
+</div>
+</div>
+</article>
+<!-- Horizontal Divider -->
+<div class="col-span-1 md:col-span-12 border-t border-outline-variant mb-section-gap hidden md:block"></div>
+<!-- Row 2: Tall Vertical + Horizontal -->
+<div class="col-span-1 md:col-span-12 grid grid-cols-1 md:grid-cols-12 gap-gutter mb-section-gap">
+<!-- 2. 'Stone & Timber' - Tall vertical crop -->
+<article class="col-span-1 md:col-span-5 group cursor-pointer mb-12 md:mb-0">
+<div class="w-full h-[819px] mb-6 overflow-hidden bg-surface-dim border border-outline-variant rounded-none">
+<img class="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-700 ease-out" data-alt="A tall, vertical editorial crop of a modern residence blending rough natural stone with smooth timber cladding. The light mode image emphasizes the tactile textures of the materials under soft, diffused natural daylight. Minimalist landscaping with native grasses frames the lower portion. High-end architectural digest style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBp1RSgccctNLq1mrfpKxmBFFLRIBjAcUIzI_mbt1DZ0ZdwK-nMMQTPw0zIZiSdetCGGjrTerFkci-Z1JYHqf40RJfZ5nD7NbWWL51xpbJ7uXrT5lA9qf0A637vN7yx3MXieZl-iEKnWW6JBkns0V3uNIxgpnV_u6RFAmqo-C4mrlbIJ8oC7seY5Ih-0VAhsnqzN_q0J8jeslMYSOUTachHSEJYi5Ofiter9I5hiVd6m8ZYJW_V-vEx"/>
+</div>
+<div>
+<h2 class="font-headline-md text-headline-md text-primary mb-2">Stone &amp; Timber</h2>
+<p class="font-label-caps text-label-caps text-on-surface-variant tracking-widest uppercase mb-4">Highgate, London</p>
+<div class="font-body-lg text-body-lg text-primary mb-2">£8,500,000</div>
+<div class="font-label-caps text-label-caps text-on-surface-variant tracking-widest uppercase flex flex-wrap gap-x-4 gap-y-2">
+<span>Available</span>
+<span class="w-1 h-1 bg-outline-variant rounded-full self-center"></span>
+<span>6 Beds</span>
+<span class="w-1 h-1 bg-outline-variant rounded-full self-center"></span>
+<span>6 Baths</span>
+<span class="w-1 h-1 bg-outline-variant rounded-full self-center"></span>
+<span>7,400 Sq Ft</span>
+</div>
+</div>
+</article>
+<!-- 3. 'The Glass Pavilion' - Horizontal crop -->
+<article class="col-span-1 md:col-span-7 group cursor-pointer flex flex-col justify-end">
+<div class="w-full h-[512px] mb-6 overflow-hidden bg-surface-dim border border-outline-variant rounded-none">
+<img class="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-700 ease-out" data-alt="A wide horizontal crop of a striking modernist glass pavilion set within a lush, manicured walled garden. The scene is brightly lit in a light mode aesthetic, highlighting the transparency of the glass walls and the sleek, minimal dark steel framework. Crisp white interior elements are visible through the glass." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyLsQXlRN2xcaF1G2BItJyOJ94AI0nX7bqboDdgKUUqlMQ7lBluek-Vbs4AC_PFMOWjWGbxKc4bDz0OQz5Kw54WG9Rbak8y764TXZrI5ucfH1U3mdeSU1A2LWDz_gVlfw3dhYDILK32fD1Cb5wc4P9aFoMxBc13rQJJGSK67WIjF_pEKkesGtS-QX1QMrKz3XpnvS2fPawSoIPXMYpxQ8IVW6Vxv3_scEY6DIRw9wLIjc1zci1UV_w"/>
+</div>
+<div>
+<h2 class="font-headline-md text-headline-md text-primary mb-2">The Glass Pavilion</h2>
+<p class="font-label-caps text-label-caps text-on-surface-variant tracking-widest uppercase mb-4">Surrey Hills</p>
+<div class="font-body-lg text-body-lg text-primary mb-2">£3,100,000</div>
+<div class="font-label-caps text-label-caps text-on-surface-variant tracking-widest uppercase flex flex-wrap gap-x-4 gap-y-2">
+<span>Under Offer</span>
+<span class="w-1 h-1 bg-outline-variant rounded-full self-center"></span>
+<span>3 Beds</span>
+<span class="w-1 h-1 bg-outline-variant rounded-full self-center"></span>
+<span>2 Baths</span>
+<span class="w-1 h-1 bg-outline-variant rounded-full self-center"></span>
+<span>2,800 Sq Ft</span>
+</div>
+</div>
+</article>
+</div>
+<!-- Horizontal Divider -->
+<div class="col-span-1 md:col-span-12 border-t border-outline-variant mb-section-gap hidden md:block"></div>
+<!-- 4. 'Pine Pavilion' - Wide landscape crop -->
+<article class="col-span-1 md:col-span-12 group cursor-pointer mb-section-gap">
+<div class="w-full h-[614px] mb-6 overflow-hidden bg-surface-dim border border-outline-variant rounded-none">
+<img class="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-700 ease-out" data-alt="A wide panoramic landscape image of a low-profile, minimalist pavilion constructed from pale pine wood, nestled among tall, slender evergreen trees. The lighting is soft and bright, creating a serene, light mode Scandinavian-inspired architectural scene. The composition is highly structured and editorial." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZkGIvlXkZ3uFuJihg6fKDaqjdH5XHc3FHouYa1x1EMGy96UMNYuBFT979mP1FQLAzvjRVVxYxpvy8E1ogogj3gKNZKCSYEXmvCipZtrYra7yaRjVC65T8xKucijQNtcA8Em9cZ9-UnhuCU0c8arS34bm4V4nJibuANKhvR0hjkHCxs4Hk-tcxEcBPq2zTgKIotbPuJTMbOj_0hczM4a0aT48n2zwPN2Lq6futnhZoLfgxsSUBOtBY"/>
+</div>
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end">
+<div>
+<h2 class="font-headline-md text-headline-md text-primary mb-2">Pine Pavilion</h2>
+<p class="font-label-caps text-label-caps text-on-surface-variant tracking-widest uppercase">The Cotswolds</p>
+</div>
+<div class="mt-4 md:mt-0 text-left md:text-right">
+<div class="font-body-lg text-body-lg text-primary mb-2">£2,850,000</div>
+<div class="font-label-caps text-label-caps text-on-surface-variant tracking-widest uppercase flex items-center space-x-4">
+<span>Available</span>
+<span class="w-1 h-1 bg-outline-variant rounded-full"></span>
+<span>3 Beds</span>
+<span class="w-1 h-1 bg-outline-variant rounded-full"></span>
+<span>3 Baths</span>
+<span class="w-1 h-1 bg-outline-variant rounded-full"></span>
+<span>2,400 Sq Ft</span>
+</div>
+</div>
+</div>
+</article>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full px-margin-desktop py-section-gap flex flex-col md:flex-row justify-between items-start gap-gutter bg-surface-container-low border-t border-outline-variant">
+<div class="font-display-lg text-headline-md text-primary mb-8 md:mb-0">
+            Atelier North
+        </div>
+<div class="flex flex-col md:flex-row gap-gutter md:gap-16">
+<div class="flex flex-col space-y-4">
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="#">Office: London &amp; Cornwall</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="#">enquiries@ateliernorth.com</a>
+</div>
+<div class="flex flex-col space-y-4">
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="#">Instagram</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="#">LinkedIn</a>
+</div>
+</div>
+<div class="font-label-caps text-label-caps text-on-surface-variant mt-8 md:mt-0">
+            © Atelier North Properties. All rights reserved.
+        </div>
+</footer>
+</body></html>
