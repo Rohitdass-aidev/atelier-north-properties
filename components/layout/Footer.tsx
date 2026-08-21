@@ -1,6 +1,15 @@
+'use client';
+
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 export default function Footer() {
+  const pathname = usePathname();
+
+  if (pathname.startsWith('/admin')) {
+    return null;
+  }
+
   return (
     <footer className="w-full px-margin-mobile md:px-margin-desktop py-12 md:py-16 flex flex-col md:flex-row justify-between items-start gap-gutter bg-surface-container-low border-t border-outline-variant mt-auto">
       {/* Brand Column */}

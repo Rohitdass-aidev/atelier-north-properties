@@ -32,6 +32,10 @@ export default function NavBar() {
     { href: '/enquire', label: 'Enquire', icon: 'mail' },
   ];
 
+  if (pathname.startsWith('/admin')) {
+    return null;
+  }
+
   return (
     <>
       {/* Top Header - Compact, refined height matching Stitch */}
