@@ -1,110 +1,178 @@
-'use client';
+import { Suspense } from 'react';
+import { createClient } from '@/lib/supabase/server';
+import { Property, PropertyStatus, PropertyType, PropertyArea } from '@/lib/mockData';
+import ListingsClient from './ListingsClient';
 
-import { useState, useMemo, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { getAllProperties } from '@/lib/mockData';
-import ListingGrid from '@/components/listings/ListingGrid';
-import DensitySelector, { DensityMode } from '@/components/listings/DensitySelector';
-import FiltersBar from '@/components/listings/FiltersBar';
+export const dynamic = 'force-dynamic';
 
-function ListingsContent() {
-  const searchParams = useSearchParams();
-  const initialArea = searchParams.get('area') || 'All';
+function mapStatusDisplay(status: string): string {
+  switch (status) {
+    case 'available':
+      return 'Available';
+    case 'under_offer':
+      return 'Under Offer';
+    case 'sold':
+      return 'Sold';
+    case 'off_market':
+      return 'Off Market';
+    default:
+      return status;
+  }
+}
 
-  const [density, setDensity] = useState<DensityMode>('standard');
-  const [selectedType, setSelectedType] = useState<string>('All');
-  const [selectedArea, setSelectedArea] = useState<string>(initialArea);
-  const [selectedStatus, setSelectedStatus] = useState<string>('All');
+function mapTypeDisplay(type: string): string {
+  switch (type) {
+    case 'house':
+      return 'House';
+    case 'apartment':
+      return 'Apartment';
+    case 'villa':
+      return 'Villa';
+    case 'penthouse':
+      return 'Penthouse';
+    case 'land':
+      return 'Land';
+    default:
+      return type;
+  }
+}
 
-  const allProps = getAllProperties();
+function determineAreaCategory(location: string): PropertyArea {
+  const loc = (location || '').toLowerCase();
+  if (
+    loc.includes('coast') ||
+    loc.includes('cornwall') ||
+    loc.includes('sea') ||
+    loc.includes('beach') ||
+    loc.includes('bay') ||
+    loc.includes('st ives') ||
+    loc.includes('mawgan')
+  ) {
+    return 'Coast';
+  }
+  if (
+    loc.includes('country') ||
+    loc.includes('cotswolds') ||
+    loc.includes('rural') ||
+    loc.includes('manor') ||
+    loc.includes('somerset') ||
+    loc.includes('hampshire')
+  ) {
+    return 'Country';
+  }
+  return 'City';
+}
 
-  // Filter properties
-  const filteredProperties = useMemo(() => {
-    return allProps.filter((p) => {
-      // Type filter
-      if (selectedType !== 'All') {
-        if (p.property_type.toLowerCase() !== selectedType.toLowerCase()) return false;
-      }
-      // Area filter
-      if (selectedArea !== 'All') {
-        const matchesCategory = p.area_category.toLowerCase() === selectedArea.toLowerCase();
-        const matchesRegion = p.region.toLowerCase().includes(selectedArea.toLowerCase());
-        const matchesLocation = p.location.toLowerCase().includes(selectedArea.toLowerCase());
-        if (!matchesCategory && !matchesRegion && !matchesLocation) return false;
-      }
-      // Status filter
-      if (selectedStatus !== 'All') {
-        if (selectedStatus === 'Available' && p.status !== 'available') return false;
-        if (selectedStatus === 'Under Offer' && p.status !== 'under_offer') return false;
-        if (selectedStatus === 'Sold' && p.status !== 'sold') return false;
-      }
-      return true;
-    });
-  }, [allProps, selectedType, selectedArea, selectedStatus]);
+function resolveImageUrl(imagePath: string | null | undefined, supabaseUrl: string): string {
+  if (!imagePath) {
+    return 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=85';
+  }
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    return imagePath;
+  }
+  const pathInBucket = imagePath.replace(/^properties\//, '');
+  return `${supabaseUrl}/storage/v1/object/public/properties/${pathInBucket}`;
+}
 
-  return (
-    <div className="pt-24 md:pt-28 pb-section-gap px-margin-mobile md:px-margin-desktop w-full max-w-[1440px] mx-auto">
-      {/* Header & Controls Section */}
-      <header className="mb-16 md:mb-20 flex flex-col md:flex-row justify-between items-start md:items-end gap-8 border-b border-outline-variant pb-8">
-        <div>
+export default async function ListingsPage() {
+  const supabase = createClient();
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+
+  const { data: rawProperties, error } = await supabase
+    .from('properties')
+    .select(`
+      id,
+      title,
+      slug,
+      location,
+      price,
+      status,
+      property_type,
+      bedrooms,
+      bathrooms,
+      area,
+      description,
+      cover_image_path,
+      published,
+      sort_order,
+      created_at,
+      property_images (
+        id,
+        image_path,
+        alt,
+        sort_order
+      )
+    `)
+    .eq('published', true)
+    .order('sort_order', { ascending: true })
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    return (
+      <div className="pt-28 pb-section-gap px-margin-mobile md:px-margin-desktop max-w-[1440px] mx-auto">
+        <header className="mb-12 border-b border-outline-variant pb-8">
           <h1 className="font-display-xl text-display-lg md:text-display-xl text-primary font-normal">
             Index
           </h1>
-          <p className="font-body-md text-on-surface-variant mt-2 max-w-xl">
-            A curated selection of architectural residences across city and coast.
+        </header>
+        <div className="p-6 bg-surface-container border border-outline text-primary font-body-md">
+          <p className="font-medium text-xs font-label-caps uppercase tracking-widest text-on-surface mb-1">
+            Unable to Load Listings
+          </p>
+          <p className="text-on-surface-variant text-sm">
+            We encountered an issue retrieving portfolio records. Please refresh the page or try again later.
           </p>
         </div>
+      </div>
+    );
+  }
 
-        {/* Controls: Filters & Density */}
-        <div className="w-full md:w-auto flex flex-col md:flex-row justify-between md:justify-end items-start md:items-center gap-6 md:gap-8">
-          <FiltersBar
-            selectedType={selectedType}
-            selectedArea={selectedArea}
-            selectedStatus={selectedStatus}
-            onTypeChange={setSelectedType}
-            onAreaChange={setSelectedArea}
-            onStatusChange={setSelectedStatus}
-          />
-          <DensitySelector currentDensity={density} onDensityChange={setDensity} />
-        </div>
-      </header>
+  // Map Supabase rows to Property model
+  const properties: Property[] = (rawProperties || []).map((row) => {
+    const sortedImages = Array.isArray(row.property_images)
+      ? [...row.property_images].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+      : [];
 
-      {/* Empty State */}
-      {filteredProperties.length === 0 && (
-        <div className="text-center py-24 border border-dashed border-outline-variant my-12 bg-surface-container-low">
-          <p className="font-display text-2xl text-primary mb-2">No properties found</p>
-          <p className="font-label-caps text-on-surface-variant uppercase text-xs">
-            Try adjusting your filter selections above
-          </p>
-          <button
-            onClick={() => {
-              setSelectedType('All');
-              setSelectedArea('All');
-              setSelectedStatus('All');
-            }}
-            className="mt-6 font-nav-link text-nav-link uppercase text-primary border-b border-primary pb-1"
-          >
-            Reset Filters
-          </button>
-        </div>
-      )}
+    const primaryImage =
+      row.cover_image_path || (sortedImages.length > 0 ? sortedImages[0].image_path : null);
+    const primaryImageAlt =
+      sortedImages.length > 0 && sortedImages[0].alt ? sortedImages[0].alt : row.title;
 
-      {/* Unified Listing Grid Component */}
-      {filteredProperties.length > 0 && (
-        <ListingGrid
-          properties={filteredProperties}
-          density={density}
-          onDensityChange={setDensity}
-        />
-      )}
-    </div>
-  );
-}
+    const coverImageUrl = resolveImageUrl(primaryImage, supabaseUrl);
 
-export default function ListingsPage() {
+    const gallery = sortedImages.map((img) => ({
+      src: resolveImageUrl(img.image_path, supabaseUrl),
+      alt: img.alt || row.title,
+    }));
+
+    return {
+      id: row.id,
+      title: row.title,
+      slug: row.slug,
+      location: row.location,
+      region: row.location.split(',')[0]?.trim() || row.location,
+      area_category: determineAreaCategory(row.location),
+      price: row.price,
+      status: (row.status || 'available') as PropertyStatus,
+      status_display: mapStatusDisplay(row.status || 'available'),
+      property_type: (row.property_type || 'house') as PropertyType,
+      property_type_display: mapTypeDisplay(row.property_type || 'house'),
+      bedrooms: row.bedrooms ?? 0,
+      bathrooms: row.bathrooms ?? 0,
+      area: row.area ?? 0,
+      description: row.description || '',
+      cover_image: coverImageUrl,
+      cover_image_alt: primaryImageAlt,
+      gallery: gallery.length > 0 ? gallery : [{ src: coverImageUrl, alt: primaryImageAlt }],
+      published: row.published,
+      sort_order: row.sort_order ?? 0,
+      image_count: sortedImages.length,
+    };
+  });
+
   return (
     <Suspense fallback={<div className="pt-32 text-center font-label text-sm">Loading index...</div>}>
-      <ListingsContent />
+      <ListingsClient properties={properties} />
     </Suspense>
   );
 }
