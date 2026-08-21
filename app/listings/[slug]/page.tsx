@@ -2,8 +2,11 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import type { Metadata } from 'next';
-import { getPropertyBySlug, getRelatedProperties, getAllProperties, formatPrice, formatArea } from '@/lib/mockData';
+import { createClient } from '@/lib/supabase/server';
+import { getRelatedProperties, formatPrice, formatArea } from '@/lib/mockData';
 import Gallery from '@/components/listings/Gallery';
+
+export const dynamic = 'force-dynamic';
 
 interface ListingPageProps {
   params: {
@@ -11,50 +14,157 @@ interface ListingPageProps {
   };
 }
 
-export async function generateStaticParams() {
-  const properties = getAllProperties();
-  return properties.map((p) => ({
-    slug: p.slug,
-  }));
+function resolveImageUrl(imagePath: string | null | undefined, supabaseUrl: string): string | null {
+  if (!imagePath || !imagePath.trim()) {
+    return null;
+  }
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    return imagePath;
+  }
+  const pathInBucket = imagePath.replace(/^properties\//, '');
+  return `${supabaseUrl}/storage/v1/object/public/properties/${pathInBucket}`;
+}
+
+function mapStatusDisplay(status: string): string {
+  switch (status) {
+    case 'available':
+      return 'Available';
+    case 'under_offer':
+      return 'Under Offer';
+    case 'sold':
+      return 'Sold';
+    case 'off_market':
+      return 'Off Market';
+    default:
+      return status;
+  }
 }
 
 export async function generateMetadata({ params }: ListingPageProps): Promise<Metadata> {
-  const property = getPropertyBySlug(params.slug);
+  const supabase = createClient();
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+
+  const { data: property } = await supabase
+    .from('properties')
+    .select('title, description, cover_image_path, property_images (image_path, alt, sort_order)')
+    .eq('slug', params.slug)
+    .eq('published', true)
+    .single();
+
   if (!property) {
     return {
       title: 'Property Not Found | Atelier North Properties',
     };
   }
 
+  const sortedImages = Array.isArray(property.property_images)
+    ? [...property.property_images].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+    : [];
+
+  const primaryImage =
+    property.cover_image_path || (sortedImages.length > 0 ? sortedImages[0].image_path : null);
+  const coverUrl = resolveImageUrl(primaryImage, supabaseUrl);
+
   return {
     title: `${property.title} | Atelier North Properties`,
-    description: property.description,
+    description: property.description || undefined,
     openGraph: {
       title: `${property.title} | Atelier North Properties`,
-      description: property.description,
-      images: [
-        {
-          url: property.cover_image,
-          alt: property.cover_image_alt,
-        },
-      ],
+      description: property.description || undefined,
+      images: coverUrl
+        ? [
+            {
+              url: coverUrl,
+              alt: property.title,
+            },
+          ]
+        : undefined,
     },
   };
 }
 
-export default function ListingDetailPage({ params }: ListingPageProps) {
-  const property = getPropertyBySlug(params.slug);
+export default async function ListingDetailPage({ params }: ListingPageProps) {
+  const supabase = createClient();
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 
-  if (!property) {
+  // Fetch only published property matching the slug
+  const { data: property, error } = await supabase
+    .from('properties')
+    .select(`
+      id,
+      title,
+      slug,
+      location,
+      price,
+      status,
+      property_type,
+      bedrooms,
+      bathrooms,
+      area,
+      description,
+      cover_image_path,
+      published,
+      sort_order,
+      created_at,
+      property_images (
+        id,
+        image_path,
+        alt,
+        sort_order
+      )
+    `)
+    .eq('slug', params.slug)
+    .eq('published', true)
+    .single();
+
+  // If not found, draft (published === false), or error -> return 404
+  if (error || !property) {
     notFound();
   }
 
+  // Sort images by sort_order ASC
+  const sortedImages = Array.isArray(property.property_images)
+    ? [...property.property_images].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+    : [];
+
+  // Build valid gallery images list without fake fallbacks
+  const gallery: { src: string; alt: string }[] = [];
+
+  if (sortedImages.length > 0) {
+    for (const img of sortedImages) {
+      const url = resolveImageUrl(img.image_path, supabaseUrl);
+      if (url) {
+        gallery.push({
+          src: url,
+          alt: img.alt || property.title,
+        });
+      }
+    }
+  } else if (property.cover_image_path) {
+    const url = resolveImageUrl(property.cover_image_path, supabaseUrl);
+    if (url) {
+      gallery.push({
+        src: url,
+        alt: property.title,
+      });
+    }
+  }
+
+  const statusDisplay = mapStatusDisplay(property.status || 'available');
   const related = getRelatedProperties(params.slug, 3);
 
   return (
     <div className="pt-[60px] md:pt-[72px] min-h-screen">
       {/* Hero Gallery Section */}
-      <Gallery images={property.gallery} title={property.title} />
+      {gallery.length > 0 ? (
+        <Gallery images={gallery} title={property.title} />
+      ) : (
+        <div className="w-full h-[320px] md:h-[480px] bg-surface-container-low border-b border-outline-variant flex items-center justify-center">
+          <p className="font-label-caps text-xs uppercase tracking-widest text-on-surface-variant">
+            No photography available for this residence
+          </p>
+        </div>
+      )}
 
       {/* Information & Details Section */}
       <section className="max-w-[1440px] mx-auto px-margin-mobile md:px-margin-desktop py-16 md:py-24 grid grid-cols-1 md:grid-cols-12 gap-gutter">
@@ -74,7 +184,7 @@ export default function ListingDetailPage({ params }: ListingPageProps) {
               Guide Price
             </span>
             <span className="font-headline-md text-headline-md text-on-surface font-normal">
-              {formatPrice(property.price, property.price_display)}
+              {formatPrice(property.price)}
             </span>
           </div>
 
@@ -83,7 +193,7 @@ export default function ListingDetailPage({ params }: ListingPageProps) {
               Status
             </span>
             <span className="inline-block px-3 py-1 font-label-caps text-xs uppercase tracking-widest border border-outline text-primary">
-              {property.status_display}
+              {statusDisplay}
             </span>
           </div>
         </div>
@@ -123,36 +233,11 @@ export default function ListingDetailPage({ params }: ListingPageProps) {
             </div>
           </div>
 
-          {/* Description & Collapsible Details Panel */}
+          {/* Description & Narrative */}
           <div className="space-y-6">
-            <p className="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+            <p className="font-body-lg text-body-lg text-on-surface-variant leading-relaxed whitespace-pre-line">
               {property.description}
             </p>
-
-            {property.extended_description && (
-              <p className="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
-                {property.extended_description}
-              </p>
-            )}
-
-            {/* Collapsible Specific Features */}
-            {property.features && property.features.length > 0 && (
-              <details className="group cursor-pointer pt-4 border-t border-outline-variant" open>
-                <summary className="font-nav-link text-nav-link uppercase tracking-widest text-primary py-2 flex items-center justify-between w-full outline-none list-none">
-                  <span className="flex items-center gap-2">
-                    <span className="group-open:rotate-90 transition-transform duration-200">›</span> Key Architectural Highlights
-                  </span>
-                </summary>
-                <ul className="pt-4 pb-2 space-y-3 font-body-md text-on-surface-variant pl-4">
-                  {property.features.map((feat, idx) => (
-                    <li key={idx} className="flex items-center gap-3">
-                      <span className="w-1.5 h-1.5 bg-primary rounded-full" />
-                      {feat}
-                    </li>
-                  ))}
-                </ul>
-              </details>
-            )}
 
             <div className="pt-6">
               <Link
