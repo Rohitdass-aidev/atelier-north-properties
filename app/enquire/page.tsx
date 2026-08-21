@@ -24,7 +24,7 @@ function EnquireForm() {
   };
 
   return (
-    <div className="pt-32 pb-section-gap px-margin-mobile md:px-margin-desktop max-w-[1440px] mx-auto w-full">
+    <div className="pt-24 md:pt-28 pb-section-gap px-margin-mobile md:px-margin-desktop max-w-[1440px] mx-auto w-full">
       <div className="grid grid-cols-1 md:grid-cols-12 gap-y-16 md:gap-gutter">
         {/* Left Column: Title & Office Details */}
         <div className="md:col-span-5 md:col-start-1 flex flex-col justify-between">

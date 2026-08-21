@@ -25,9 +25,9 @@ export default function ListingCard({
 
   if (density === 'immersive') {
     return (
-      <article className="group cursor-pointer w-full mb-16">
+      <article className="group cursor-pointer w-full">
         <Link href={`/listings/${property.slug}`} className="block">
-          <div className="w-full h-[480px] md:h-[680px] mb-6 overflow-hidden bg-surface-dim border border-outline-variant relative">
+          <div className="w-full h-[480px] md:h-[716px] mb-6 overflow-hidden bg-surface-dim border border-outline-variant relative">
             <Image
               src={property.cover_image}
               alt={property.cover_image_alt || property.title}
@@ -81,10 +81,10 @@ export default function ListingCard({
             />
           </div>
           <div className="flex flex-col gap-1 font-label-caps text-label-caps uppercase text-on-surface-variant">
-            <h3 className="font-headline-md text-lg text-primary group-hover:underline underline-offset-4 decoration-1 normal-case font-normal">
+            <p className="listing-title text-primary font-medium group-hover:underline underline-offset-4 decoration-1">
               {property.title}
-            </h3>
-            <p className="text-xs text-on-surface-variant">
+            </p>
+            <p className="text-on-surface-variant text-[11px] truncate">
               {property.location} • {formatPrice(property.price, property.price_display)}
             </p>
           </div>
@@ -93,7 +93,7 @@ export default function ListingCard({
     );
   }
 
-  // Standard editorial card
+  // Standard editorial card - clean, concise typography without text clutter
   return (
     <article className="listing-card group flex flex-col gap-4 cursor-pointer">
       <Link href={`/listings/${property.slug}`} className="block">
@@ -106,14 +106,14 @@ export default function ListingCard({
             fill
             priority={priority}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
+            className="object-cover group-hover:scale-[1.02] transition-transform duration-700 ease-out"
           />
         </div>
         <div className="flex flex-col gap-1 font-label-caps text-label-caps uppercase text-on-surface-variant mt-4">
-          <h3 className="listing-title text-primary text-base font-medium normal-case font-display">
+          <p className="listing-title text-primary font-medium">
             {property.title}
-          </h3>
-          <p className="text-[11px] tracking-wider text-on-surface-variant">
+          </p>
+          <p className="text-[11px] tracking-wider text-on-surface-variant truncate">
             {property.area_category} / {property.region} / {property.status_display} /{' '}
             {formatPrice(property.price, property.price_display)} / {property.image_count} Images
           </p>

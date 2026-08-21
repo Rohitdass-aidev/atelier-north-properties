@@ -52,7 +52,7 @@ export default function ListingDetailPage({ params }: ListingPageProps) {
   const related = getRelatedProperties(params.slug, 3);
 
   return (
-    <div className="pt-[76px] md:pt-[88px] min-h-screen">
+    <div className="pt-[60px] md:pt-[72px] min-h-screen">
       {/* Hero Gallery Section */}
       <Gallery images={property.gallery} title={property.title} />
 

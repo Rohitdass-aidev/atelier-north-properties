@@ -32,24 +32,24 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="pt-[76px] md:pt-[88px]">
-      {/* Hero Section */}
-      <section className="w-full h-[85vh] min-h-[600px] max-h-[920px] relative mb-section-gap overflow-hidden bg-primary">
+    <div className="pt-[60px] md:pt-[72px]">
+      {/* Hero Section - Matching Stitch 870px / 100dvh crop */}
+      <section className="w-full h-[100dvh] md:h-[870px] relative mb-section-gap overflow-hidden bg-primary">
         <div className="absolute inset-0">
           <Image
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAoGA1uFufkDyqmh5M9NDJxpBCSH3NQQp8gQ6WxmkqMsPy6KUS70oCtBnV5-e7EJh0ZExtcEMx93WQVkK03V1V2ecNw-Lokf_bMtyPbwhjBUnJaBQ2Z3r0o0UzLrHCD83xXt7LmQA7vDqmePMZIGl71MzRSXE2I0yEoXf6vxhZ4LItvqc5M2sptKU_3VFLQJnchf-XPWTve_pImguyzMX-Ix3shwZixeHMwGSeyUtIMZYRFjE3ZmBq"
-            alt="Modern concrete and glass house at twilight"
+            alt="A striking edge-to-edge architectural photograph of a modern concrete and glass house at twilight"
             fill
             priority
-            className="object-cover"
+            className="w-full h-full object-cover"
             sizes="100vw"
           />
         </div>
 
         {/* Bottom Banner Overlay */}
-        <div className="absolute bottom-0 left-0 w-full px-margin-mobile md:px-margin-desktop pb-8 flex flex-col md:flex-row justify-between items-start md:items-end text-on-primary bg-gradient-to-t from-primary/80 via-primary/40 to-transparent pt-32">
+        <div className="absolute bottom-0 left-0 w-full px-margin-mobile md:px-margin-desktop pb-8 flex flex-col md:flex-row justify-between items-start md:items-center text-on-primary bg-gradient-to-t from-primary/60 to-transparent pt-32">
           <div>
-            <h1 className="font-display-xl text-display-lg md:text-display-xl mb-2 text-white font-normal">
+            <h1 className="font-display-xl text-display-lg md:text-display-xl mb-2 text-white font-normal hidden md:block">
               Atelier North
             </h1>
             <p className="font-label-caps text-label-caps uppercase tracking-widest text-white/90">
@@ -85,7 +85,7 @@ export default function HomePage() {
         </div>
 
         {/* Asymmetrical Grid items */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-y-20 md:gap-x-gutter">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-y-24 md:gap-x-gutter">
           {/* Item 1: Large Portrait (Left aligned) */}
           {property1 && (
             <article className="md:col-start-2 md:col-span-6 group cursor-pointer">

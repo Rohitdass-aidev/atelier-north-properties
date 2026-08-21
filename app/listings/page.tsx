@@ -2,8 +2,8 @@
 
 import { useState, useMemo, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { getAllProperties, Property } from '@/lib/mockData';
-import ListingCard from '@/components/listings/ListingCard';
+import { getAllProperties } from '@/lib/mockData';
+import ListingGrid from '@/components/listings/ListingGrid';
 import DensitySelector, { DensityMode } from '@/components/listings/DensitySelector';
 import FiltersBar from '@/components/listings/FiltersBar';
 
@@ -42,22 +42,8 @@ function ListingsContent() {
     });
   }, [allProps, selectedType, selectedArea, selectedStatus]);
 
-  // Aspect ratio pattern for standard grid
-  const getAspectPattern = (index: number): 'portrait' | 'landscape' | 'square' | 'video' => {
-    const patterns: ('landscape' | 'portrait' | 'square' | 'video')[] = [
-      'landscape',
-      'portrait',
-      'square',
-      'video',
-      'landscape',
-      'portrait',
-      'square',
-    ];
-    return patterns[index % patterns.length];
-  };
-
   return (
-    <div className="pt-32 pb-section-gap px-margin-mobile md:px-margin-desktop w-full max-w-[1440px] mx-auto">
+    <div className="pt-24 md:pt-28 pb-section-gap px-margin-mobile md:px-margin-desktop w-full max-w-[1440px] mx-auto">
       {/* Header & Controls Section */}
       <header className="mb-16 md:mb-20 flex flex-col md:flex-row justify-between items-start md:items-end gap-8 border-b border-outline-variant pb-8">
         <div>
@@ -103,49 +89,13 @@ function ListingsContent() {
         </div>
       )}
 
-      {/* Grid Layouts according to Density */}
-      {density === 'immersive' && (
-        <div className="flex flex-col gap-12">
-          {filteredProperties.map((property, idx) => (
-            <div key={property.id}>
-              <ListingCard property={property} density="immersive" priority={idx === 0} />
-              {idx < filteredProperties.length - 1 && (
-                <div className="border-t border-outline-variant my-12 hidden md:block" />
-              )}
-            </div>
-          ))}
-        </div>
-      )}
-
-      {density === 'compact' && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-gutter gap-y-12">
-          {filteredProperties.map((property) => (
-            <ListingCard key={property.id} property={property} density="compact" />
-          ))}
-        </div>
-      )}
-
-      {density === 'standard' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-gutter gap-y-section-gap">
-          {filteredProperties.map((property, index) => (
-            <div
-              key={property.id}
-              className={
-                index % 4 === 1
-                  ? 'lg:col-start-2 lg:row-span-2'
-                  : index % 4 === 3
-                  ? 'lg:col-start-1'
-                  : ''
-              }
-            >
-              <ListingCard
-                property={property}
-                density="standard"
-                aspectRatio={getAspectPattern(index)}
-              />
-            </div>
-          ))}
-        </div>
+      {/* Unified Listing Grid Component */}
+      {filteredProperties.length > 0 && (
+        <ListingGrid
+          properties={filteredProperties}
+          density={density}
+          onDensityChange={setDensity}
+        />
       )}
     </div>
   );

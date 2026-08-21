@@ -34,12 +34,12 @@ export default function NavBar() {
 
   return (
     <>
-      {/* Top Header */}
-      <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-margin-desktop py-6 bg-surface/90 backdrop-blur-sm border-b border-outline-variant">
+      {/* Top Header - Compact, refined height matching Stitch */}
+      <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 md:py-5 bg-surface/90 backdrop-blur-sm border-b border-outline-variant">
         {/* Brand */}
         <Link
           href="/"
-          className="font-display-lg-mobile md:font-display-lg text-headline-md tracking-tighter text-primary hover:opacity-80 transition-opacity"
+          className="font-display text-xl md:text-2xl tracking-tighter text-primary hover:opacity-80 transition-opacity"
         >
           <span className="hidden md:inline">Atelier North Properties / City + Coast</span>
           <span className="md:hidden">Atelier North</span>
@@ -72,14 +72,14 @@ export default function NavBar() {
         {/* Mobile Menu Toggle Button */}
         <button
           onClick={() => setIsMobileMenuOpen(true)}
-          className="md:hidden p-2 text-primary focus:outline-none"
+          className="md:hidden p-1 text-primary focus:outline-none"
           aria-label="Open navigation menu"
         >
           <span className="material-symbols-outlined text-2xl">menu</span>
         </button>
       </header>
 
-      {/* Mobile Slide-out Menu Overlay */}
+      {/* Mobile Slide-out Menu Overlay - Matching Stitch exactly */}
       <div
         className={`fixed inset-0 z-[100] flex flex-col items-center justify-center space-y-8 bg-surface transition-transform duration-500 ease-in-out md:hidden ${
           isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
@@ -93,7 +93,7 @@ export default function NavBar() {
           <span className="material-symbols-outlined text-2xl">close</span>
         </button>
 
-        <div className="text-center mb-8">
+        <div className="text-center mb-6">
           <Link
             href="/"
             onClick={() => setIsMobileMenuOpen(false)}
@@ -106,7 +106,7 @@ export default function NavBar() {
           </span>
         </div>
 
-        <nav className="flex flex-col space-y-6 text-center w-full px-8 max-w-xs">
+        <nav className="flex flex-col space-y-6 text-center items-center">
           {navLinks.map((link) => {
             const isActive =
               link.href === '/listings'
@@ -118,10 +118,10 @@ export default function NavBar() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className={`font-nav-link text-nav-link uppercase flex items-center justify-center gap-3 py-3 px-4 transition-colors ${
+                className={`font-nav-link text-nav-link uppercase flex items-center gap-2 pb-1 transition-colors ${
                   isActive
-                    ? 'text-primary font-bold border-b border-primary bg-surface-container-low'
-                    : 'text-on-surface-variant hover:text-primary active:bg-surface-container-high'
+                    ? 'text-primary font-bold border-b border-primary'
+                    : 'text-on-surface-variant hover:text-primary'
                 }`}
               >
                 <span className="material-symbols-outlined text-lg">{link.icon}</span>

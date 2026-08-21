@@ -38,7 +38,7 @@ export default function Gallery({ images, title }: GalleryProps) {
   const currentImage = images[currentIndex];
 
   return (
-    <section className="relative w-full h-[70vh] min-h-[500px] md:h-[88vh] bg-surface flex flex-col overflow-hidden">
+    <section className="relative w-full h-[530px] md:h-[921px] bg-surface flex flex-col overflow-hidden">
       {/* Active Slide Image */}
       <div className="absolute inset-0 w-full h-full">
         <Image
@@ -47,43 +47,38 @@ export default function Gallery({ images, title }: GalleryProps) {
           fill
           priority
           sizes="100vw"
-          className="object-cover transition-opacity duration-700 ease-in-out"
+          className="object-cover"
         />
-        {/* Gradient Overlay for bottom readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-primary/60 via-transparent to-black/10 pointer-events-none" />
+        {/* Overlay for bottom text readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-primary/40 to-transparent pointer-events-none" />
       </div>
 
-      {/* Prev / Next Clickable Navigation Area & Buttons */}
+      {/* Gallery Controls - Understated, minimal text matching Stitch */}
       <div className="absolute inset-0 flex items-center justify-between px-margin-mobile md:px-margin-desktop pointer-events-none z-10">
         <button
           onClick={prevSlide}
-          className="pointer-events-auto font-label-caps text-label-caps text-on-primary uppercase tracking-widest hover:opacity-70 transition-opacity bg-primary/20 backdrop-blur-md md:bg-transparent px-4 py-2 md:p-0 rounded"
+          className="pointer-events-auto font-label-caps text-label-caps text-on-primary uppercase tracking-widest hover:opacity-70 transition-opacity focus:outline-none py-2 px-1"
           aria-label="Previous image"
         >
-          ← Prev
+          Prev
         </button>
         <button
           onClick={nextSlide}
-          className="pointer-events-auto font-label-caps text-label-caps text-on-primary uppercase tracking-widest hover:opacity-70 transition-opacity bg-primary/20 backdrop-blur-md md:bg-transparent px-4 py-2 md:p-0 rounded"
+          className="pointer-events-auto font-label-caps text-label-caps text-on-primary uppercase tracking-widest hover:opacity-70 transition-opacity focus:outline-none py-2 px-1"
           aria-label="Next image"
         >
-          Next →
+          Next
         </button>
       </div>
 
-      {/* Image Counter & Progress Bar */}
+      {/* Image Counter & Subtle Progress Bar */}
       <div className="absolute bottom-0 left-0 w-full px-margin-mobile md:px-margin-desktop pb-8 flex flex-col gap-4 z-10">
-        <div className="font-label-caps text-label-caps text-on-primary tracking-widest flex justify-between items-center">
-          <span>
-            {String(currentIndex + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
-          </span>
-          <span className="hidden sm:inline opacity-80 uppercase text-[11px]">
-            Use keyboard arrows to navigate
-          </span>
+        <div className="font-label-caps text-label-caps text-on-primary tracking-widest">
+          {String(currentIndex + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
         </div>
-        <div className="w-full h-[2px] bg-white/30 relative overflow-hidden">
+        <div className="w-full h-[1px] bg-outline-variant/30 relative">
           <div
-            className="absolute top-0 left-0 h-full bg-white transition-all duration-300 ease-out"
+            className="absolute top-0 left-0 h-full bg-on-primary transition-all duration-300 ease-out"
             style={{ width: `${progressPercentage}%` }}
           />
         </div>
