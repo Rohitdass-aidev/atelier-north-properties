@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import PublishToggleButton from './PublishToggleButton';
+import DeletePropertyButton from './DeletePropertyButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -196,6 +197,10 @@ export default async function AdminPropertiesPage() {
                         >
                           Edit
                         </Link>
+                        <DeletePropertyButton
+                          propertyId={property.id}
+                          propertyTitle={property.title}
+                        />
                       </div>
                     </td>
                   </tr>
