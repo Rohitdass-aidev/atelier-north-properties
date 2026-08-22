@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import PropertyEditForm from './PropertyEditForm';
 import UploadForm from './UploadForm';
 import ImageGalleryManager from './ImageGalleryManager';
 
@@ -50,7 +51,7 @@ export default async function PropertyEditPage({
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 
   return (
-    <div className="space-y-10 max-w-5xl mx-auto">
+    <div className="space-y-12 max-w-5xl mx-auto">
       {/* Top Header */}
       <div className="border-b border-outline-variant pb-6">
         <Link
@@ -69,7 +70,17 @@ export default async function PropertyEditPage({
               <span className="font-mono text-xs">/{property.slug}</span>
             </p>
           </div>
-          <div>
+          <div className="flex items-center gap-3">
+            {property.published && (
+              <Link
+                href={`/listings/${property.slug}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block px-3 py-1 text-xs font-nav-link uppercase tracking-wider text-primary border border-outline-variant hover:border-primary transition-colors"
+              >
+                View Live ↗
+              </Link>
+            )}
             <span
               className={`inline-block px-3 py-1 text-xs font-label-caps uppercase tracking-wider border ${
                 property.published
@@ -83,11 +94,28 @@ export default async function PropertyEditPage({
         </div>
       </div>
 
+      {/* Property Details Form */}
+      <div className="space-y-4">
+        <div className="flex justify-between items-center border-b border-outline-variant pb-3">
+          <h2 className="font-label-caps text-xs uppercase tracking-widest text-primary">
+            Property Specifications &amp; Details
+          </h2>
+        </div>
+        <PropertyEditForm property={property} />
+      </div>
+
       {/* Image Upload Section */}
-      <UploadForm propertyId={property.id} propertyTitle={property.title} />
+      <div className="space-y-4 pt-4 border-t border-outline-variant">
+        <div className="flex justify-between items-center border-b border-outline-variant pb-3">
+          <h2 className="font-label-caps text-xs uppercase tracking-widest text-primary">
+            Upload Photography
+          </h2>
+        </div>
+        <UploadForm propertyId={property.id} propertyTitle={property.title} />
+      </div>
 
       {/* Image Gallery Manager */}
-      <div className="space-y-4">
+      <div className="space-y-4 pt-4 border-t border-outline-variant">
         <div className="flex justify-between items-center border-b border-outline-variant pb-3">
           <h2 className="font-label-caps text-xs uppercase tracking-widest text-primary">
             Uploaded Images ({images?.length || 0})
