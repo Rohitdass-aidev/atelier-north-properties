@@ -1,11 +1,49 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { getPropertyBySlug, formatPrice } from '@/lib/mockData';
+import { createClient } from '@/lib/supabase/server';
+import { formatPrice } from '@/lib/mockData';
 
-export default function HomePage() {
-  const property1 = getPropertyBySlug('the-brutalist-mews');
-  const property2 = getPropertyBySlug('cliffside-retreat');
-  const property3 = getPropertyBySlug('georgian-intervention');
+export const dynamic = 'force-dynamic';
+
+function resolveImageUrl(imagePath: string | null | undefined, supabaseUrl: string): string | null {
+  if (!imagePath || !imagePath.trim()) {
+    return null;
+  }
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    return imagePath;
+  }
+  const pathInBucket = imagePath.replace(/^properties\//, '');
+  return `${supabaseUrl}/storage/v1/object/public/properties/${pathInBucket}`;
+}
+
+export default async function HomePage() {
+  const supabase = createClient();
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+
+  // Query only published properties from Supabase, sorted by sort_order ASC, then created_at DESC
+  const { data: properties, error } = await supabase
+    .from('properties')
+    .select(`
+      id,
+      title,
+      slug,
+      location,
+      price,
+      cover_image_path,
+      published,
+      sort_order,
+      created_at,
+      property_images (
+        id,
+        image_path,
+        alt,
+        sort_order
+      )
+    `)
+    .eq('published', true)
+    .order('sort_order', { ascending: true })
+    .order('created_at', { ascending: false })
+    .limit(3);
 
   const areas = [
     {
@@ -30,6 +68,33 @@ export default function HomePage() {
       alt: 'Hampstead modernist architecture among foliage',
     },
   ];
+
+  // Helper to extract image details for a property
+  const getPropertyDetails = (property: typeof properties extends (infer T)[] | null ? T : any) => {
+    if (!property) return null;
+    const sortedImages = Array.isArray(property.property_images)
+      ? [...property.property_images].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+      : [];
+    const primaryImagePath =
+      property.cover_image_path || (sortedImages.length > 0 ? sortedImages[0].image_path : null);
+    const imageUrl = resolveImageUrl(primaryImagePath, supabaseUrl);
+    const imageAlt =
+      sortedImages.length > 0 && sortedImages[0].alt
+        ? sortedImages[0].alt
+        : `${property.title} architectural photograph`;
+    const imageCount = sortedImages.length;
+
+    return {
+      property,
+      imageUrl,
+      imageAlt,
+      imageCount,
+    };
+  };
+
+  const item1 = properties && properties.length > 0 ? getPropertyDetails(properties[0]) : null;
+  const item2 = properties && properties.length > 1 ? getPropertyDetails(properties[1]) : null;
+  const item3 = properties && properties.length > 2 ? getPropertyDetails(properties[2]) : null;
 
   return (
     <div className="pt-[60px] md:pt-[72px]">
@@ -84,123 +149,175 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Asymmetrical Grid items */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-y-24 md:gap-x-gutter">
-          {/* Item 1: Large Portrait (Left aligned) */}
-          {property1 && (
-            <article className="md:col-start-2 md:col-span-6 group cursor-pointer">
-              <Link href={`/listings/${property1.slug}`}>
-                <div className="w-full aspect-[3/4] overflow-hidden border border-outline-variant relative mb-4 bg-surface-dim">
-                  <Image
-                    src={property1.cover_image}
-                    alt={property1.cover_image_alt}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    className="object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
-                  />
-                </div>
-                <div className="flex justify-between items-baseline border-b border-outline-variant pb-2">
-                  <div>
-                    <h3 className="font-headline-md text-headline-md text-primary font-normal group-hover:underline underline-offset-4 decoration-1">
-                      {property1.title}
-                    </h3>
-                    <p className="font-label-caps text-label-caps text-on-surface-variant uppercase mt-1">
-                      {property1.location}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-nav-link text-nav-link text-primary font-medium">
-                      {formatPrice(property1.price, property1.price_display)}
-                    </p>
-                    <p className="font-label-caps text-label-caps text-on-surface-variant uppercase mt-1">
-                      08 IMG
-                    </p>
-                  </div>
-                </div>
-              </Link>
-            </article>
-          )}
+        {/* Query error handling */}
+        {error && (
+          <div className="p-6 bg-surface-container border border-outline text-primary font-body-md mb-12">
+            <p className="font-medium text-xs font-label-caps uppercase tracking-widest text-on-surface mb-1">
+              Unable to Load Curated Listings
+            </p>
+            <p className="text-on-surface-variant text-sm">{error.message}</p>
+          </div>
+        )}
 
-          {/* Item 2: Landscape (Right aligned & offset vertically) */}
-          {property2 && (
-            <article className="md:col-start-7 md:col-span-6 md:mt-48 group cursor-pointer">
-              <Link href={`/listings/${property2.slug}`}>
-                <div className="w-full aspect-[4/3] overflow-hidden border border-outline-variant relative mb-4 bg-surface-dim">
-                  <Image
-                    src={property2.cover_image}
-                    alt={property2.cover_image_alt}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    className="object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
-                  />
-                </div>
-                <div className="flex justify-between items-baseline border-b border-outline-variant pb-2">
-                  <div>
-                    <h3 className="font-headline-md text-headline-md text-primary font-normal group-hover:underline underline-offset-4 decoration-1">
-                      {property2.title}
-                    </h3>
-                    <p className="font-label-caps text-label-caps text-on-surface-variant uppercase mt-1">
-                      {property2.location}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-nav-link text-nav-link text-primary font-medium">
-                      {formatPrice(property2.price, property2.price_display)}
-                    </p>
-                    <p className="font-label-caps text-label-caps text-on-surface-variant uppercase mt-1">
-                      12 IMG
-                    </p>
-                  </div>
-                </div>
-              </Link>
-            </article>
-          )}
-
-          {/* Item 3: Square (Center left) */}
-          {property3 && (
-            <article className="md:col-start-3 md:col-span-5 group cursor-pointer">
-              <Link href={`/listings/${property3.slug}`}>
-                <div className="w-full aspect-square overflow-hidden border border-outline-variant relative mb-4 bg-surface-dim">
-                  <Image
-                    src={property3.cover_image}
-                    alt={property3.cover_image_alt}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 40vw"
-                    className="object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
-                  />
-                </div>
-                <div className="flex justify-between items-baseline border-b border-outline-variant pb-2">
-                  <div>
-                    <h3 className="font-headline-md text-headline-md text-primary font-normal group-hover:underline underline-offset-4 decoration-1">
-                      {property3.title}
-                    </h3>
-                    <p className="font-label-caps text-label-caps text-on-surface-variant uppercase mt-1">
-                      {property3.location}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-nav-link text-nav-link text-primary font-medium">
-                      {formatPrice(property3.price, property3.price_display)}
-                    </p>
-                    <p className="font-label-caps text-label-caps text-on-surface-variant uppercase mt-1">
-                      05 IMG
-                    </p>
-                  </div>
-                </div>
-              </Link>
-            </article>
-          )}
-
-          {/* View All Listings CTA */}
-          <div className="md:col-start-1 md:col-span-12 flex justify-center mt-12">
+        {/* Empty state when no properties are published */}
+        {!error && (!properties || properties.length === 0) && (
+          <div className="text-center py-20 px-4 border border-outline-variant bg-surface-container-low mb-12">
+            <p className="font-display text-2xl text-primary mb-2">No curated residences published</p>
+            <p className="font-body-md text-on-surface-variant text-sm max-w-md mx-auto mb-6">
+              Our curated collection is currently being updated. Please check back soon or browse all properties.
+            </p>
             <Link
               href="/listings"
-              className="font-label-caps text-label-caps uppercase tracking-widest border border-primary px-8 py-4 hover:bg-primary hover:text-on-primary transition-colors duration-300"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-on-primary font-label-caps text-label-caps uppercase tracking-widest hover:bg-primary/90 transition-colors"
             >
-              View All Listings
+              Explore Index
             </Link>
           </div>
-        </div>
+        )}
+
+        {/* Asymmetrical Grid items */}
+        {properties && properties.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-y-24 md:gap-x-gutter">
+            {/* Item 1: Large Portrait (Left aligned) */}
+            {item1 && (
+              <article className="md:col-start-2 md:col-span-6 group cursor-pointer">
+                <Link href={`/listings/${item1.property.slug}`}>
+                  <div className="w-full aspect-[3/4] overflow-hidden border border-outline-variant relative mb-4 bg-surface-dim">
+                    {item1.imageUrl ? (
+                      <Image
+                        src={item1.imageUrl}
+                        alt={item1.imageAlt}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        className="object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <span className="font-label-caps text-xs uppercase tracking-widest text-on-surface-variant">
+                          Photography in Preparation
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex justify-between items-baseline border-b border-outline-variant pb-2">
+                    <div>
+                      <h3 className="font-headline-md text-headline-md text-primary font-normal group-hover:underline underline-offset-4 decoration-1">
+                        {item1.property.title}
+                      </h3>
+                      <p className="font-label-caps text-label-caps text-on-surface-variant uppercase mt-1">
+                        {item1.property.location}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-nav-link text-nav-link text-primary font-medium">
+                        {formatPrice(item1.property.price)}
+                      </p>
+                      <p className="font-label-caps text-label-caps text-on-surface-variant uppercase mt-1">
+                        {String(item1.imageCount).padStart(2, '0')} IMG
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+              </article>
+            )}
+
+            {/* Item 2: Landscape (Right aligned & offset vertically) */}
+            {item2 && (
+              <article className="md:col-start-7 md:col-span-6 md:mt-48 group cursor-pointer">
+                <Link href={`/listings/${item2.property.slug}`}>
+                  <div className="w-full aspect-[4/3] overflow-hidden border border-outline-variant relative mb-4 bg-surface-dim">
+                    {item2.imageUrl ? (
+                      <Image
+                        src={item2.imageUrl}
+                        alt={item2.imageAlt}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        className="object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <span className="font-label-caps text-xs uppercase tracking-widest text-on-surface-variant">
+                          Photography in Preparation
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex justify-between items-baseline border-b border-outline-variant pb-2">
+                    <div>
+                      <h3 className="font-headline-md text-headline-md text-primary font-normal group-hover:underline underline-offset-4 decoration-1">
+                        {item2.property.title}
+                      </h3>
+                      <p className="font-label-caps text-label-caps text-on-surface-variant uppercase mt-1">
+                        {item2.property.location}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-nav-link text-nav-link text-primary font-medium">
+                        {formatPrice(item2.property.price)}
+                      </p>
+                      <p className="font-label-caps text-label-caps text-on-surface-variant uppercase mt-1">
+                        {String(item2.imageCount).padStart(2, '0')} IMG
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+              </article>
+            )}
+
+            {/* Item 3: Square (Center left) */}
+            {item3 && (
+              <article className="md:col-start-3 md:col-span-5 group cursor-pointer">
+                <Link href={`/listings/${item3.property.slug}`}>
+                  <div className="w-full aspect-square overflow-hidden border border-outline-variant relative mb-4 bg-surface-dim">
+                    {item3.imageUrl ? (
+                      <Image
+                        src={item3.imageUrl}
+                        alt={item3.imageAlt}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 40vw"
+                        className="object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <span className="font-label-caps text-xs uppercase tracking-widest text-on-surface-variant">
+                          Photography in Preparation
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex justify-between items-baseline border-b border-outline-variant pb-2">
+                    <div>
+                      <h3 className="font-headline-md text-headline-md text-primary font-normal group-hover:underline underline-offset-4 decoration-1">
+                        {item3.property.title}
+                      </h3>
+                      <p className="font-label-caps text-label-caps text-on-surface-variant uppercase mt-1">
+                        {item3.property.location}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-nav-link text-nav-link text-primary font-medium">
+                        {formatPrice(item3.property.price)}
+                      </p>
+                      <p className="font-label-caps text-label-caps text-on-surface-variant uppercase mt-1">
+                        {String(item3.imageCount).padStart(2, '0')} IMG
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+              </article>
+            )}
+
+            {/* View All Listings CTA */}
+            <div className="md:col-start-1 md:col-span-12 flex justify-center mt-12">
+              <Link
+                href="/listings"
+                className="font-label-caps text-label-caps uppercase tracking-widest border border-primary px-8 py-4 hover:bg-primary hover:text-on-primary transition-colors duration-300"
+              >
+                View All Listings
+              </Link>
+            </div>
+          </div>
+        )}
       </section>
 
       {/* Areas of Focus Section */}
