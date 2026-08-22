@@ -1,7 +1,11 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { deletePropertyImage, reorderPropertyImage } from './actions';
+import {
+  deletePropertyImage,
+  reorderPropertyImage,
+  setPropertyCoverImage,
+} from './actions';
 
 export type PropertyImageItem = {
   id: string;
@@ -15,16 +19,32 @@ export default function ImageGalleryManager({
   propertyId,
   propertyTitle,
   images,
+  coverImagePath,
   supabaseUrl,
 }: {
   propertyId: string;
   propertyTitle: string;
   images: PropertyImageItem[];
+  coverImagePath: string | null;
   supabaseUrl: string;
 }) {
   const [isPending, startTransition] = useTransition();
   const [activeActionId, setActiveActionId] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const handleSetCover = (imagePath: string, imageId: string) => {
+    setErrorMessage(null);
+    setActiveActionId(imageId);
+
+    startTransition(async () => {
+      const res = await setPropertyCoverImage(propertyId, imagePath);
+      if (res?.error) {
+        setErrorMessage(res.error);
+        alert(`Failed to set cover image: ${res.error}`);
+      }
+      setActiveActionId(null);
+    });
+  };
 
   const handleReorder = (imageId: string, direction: 'up' | 'down') => {
     setErrorMessage(null);
@@ -87,13 +107,14 @@ export default function ImageGalleryManager({
           const isFirst = index === 0;
           const isLast = index === images.length - 1;
           const isBusy = isPending && activeActionId === img.id;
+          const isCover = coverImagePath === img.image_path;
 
           return (
             <div
               key={img.id}
-              className={`bg-surface-container-low border border-outline-variant overflow-hidden flex flex-col transition-opacity ${
-                isBusy ? 'opacity-50 pointer-events-none' : 'opacity-100'
-              }`}
+              className={`bg-surface-container-low border transition-opacity flex flex-col ${
+                isCover ? 'border-primary shadow-sm' : 'border-outline-variant'
+              } ${isBusy ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}
             >
               {/* Image Preview Container */}
               <div className="aspect-[4/3] bg-surface-container relative overflow-hidden border-b border-outline-variant">
@@ -103,9 +124,16 @@ export default function ImageGalleryManager({
                   alt={img.alt || propertyTitle}
                   className="w-full h-full object-cover"
                 />
-                <span className="absolute top-2 left-2 px-2 py-0.5 bg-primary/90 text-on-primary font-label-caps text-[10px] uppercase tracking-wider">
-                  #{index + 1} (Sort: {img.sort_order})
-                </span>
+                <div className="absolute top-2 left-2 flex items-center gap-1.5 flex-wrap">
+                  <span className="px-2 py-0.5 bg-primary/90 text-on-primary font-label-caps text-[10px] uppercase tracking-wider">
+                    #{index + 1}
+                  </span>
+                  {isCover && (
+                    <span className="px-2 py-0.5 bg-secondary text-primary font-label-caps text-[10px] uppercase tracking-wider font-semibold">
+                      ★ Cover Photo
+                    </span>
+                  )}
+                </div>
               </div>
 
               {/* Metadata Info */}
@@ -122,36 +150,53 @@ export default function ImageGalleryManager({
               </div>
 
               {/* Action Toolbar */}
-              <div className="p-3 bg-surface border-t border-outline-variant flex items-center justify-between gap-2">
+              <div className="p-3 bg-surface border-t border-outline-variant flex items-center justify-between gap-2 flex-wrap">
+                <div className="flex items-center gap-1">
+                  {!isCover ? (
+                    <button
+                      type="button"
+                      disabled={isPending}
+                      onClick={() => handleSetCover(img.image_path, img.id)}
+                      title="Set as primary cover image for public display"
+                      className="px-2 py-1 text-[11px] font-label-caps uppercase tracking-wider border border-outline-variant hover:border-primary bg-surface hover:bg-surface-container transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                      Set as Cover
+                    </button>
+                  ) : (
+                    <span className="px-2 py-1 text-[11px] font-label-caps uppercase tracking-wider text-secondary font-medium">
+                      Primary Cover
+                    </span>
+                  )}
+                </div>
+
                 <div className="flex items-center gap-1">
                   <button
                     type="button"
                     disabled={isFirst || isPending}
                     onClick={() => handleReorder(img.id, 'up')}
                     title="Move Up in sequence"
-                    className="px-2.5 py-1 text-[11px] font-label-caps uppercase tracking-wider border border-outline-variant bg-surface hover:bg-surface-container disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                    className="px-2 py-1 text-[11px] font-label-caps uppercase tracking-wider border border-outline-variant bg-surface hover:bg-surface-container disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
                   >
-                    ↑ Up
+                    ↑
                   </button>
                   <button
                     type="button"
                     disabled={isLast || isPending}
                     onClick={() => handleReorder(img.id, 'down')}
                     title="Move Down in sequence"
-                    className="px-2.5 py-1 text-[11px] font-label-caps uppercase tracking-wider border border-outline-variant bg-surface hover:bg-surface-container disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                    className="px-2 py-1 text-[11px] font-label-caps uppercase tracking-wider border border-outline-variant bg-surface hover:bg-surface-container disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
                   >
-                    ↓ Down
+                    ↓
+                  </button>
+                  <button
+                    type="button"
+                    disabled={isPending}
+                    onClick={() => handleDelete(img.id, img.alt)}
+                    className="px-2 py-1 text-[11px] font-label-caps uppercase tracking-wider text-on-surface-variant hover:text-primary hover:bg-surface-container border border-transparent hover:border-outline-variant transition-colors cursor-pointer"
+                  >
+                    Delete
                   </button>
                 </div>
-
-                <button
-                  type="button"
-                  disabled={isPending}
-                  onClick={() => handleDelete(img.id, img.alt)}
-                  className="px-2.5 py-1 text-[11px] font-label-caps uppercase tracking-wider text-on-surface-variant hover:text-primary hover:bg-surface-container border border-transparent hover:border-outline-variant transition-colors cursor-pointer"
-                >
-                  Delete
-                </button>
               </div>
             </div>
           );

@@ -126,6 +126,7 @@ export default async function PropertyEditPage({
           propertyId={property.id}
           propertyTitle={property.title}
           images={images || []}
+          coverImagePath={property.cover_image_path}
           supabaseUrl={supabaseUrl}
         />
       </div>

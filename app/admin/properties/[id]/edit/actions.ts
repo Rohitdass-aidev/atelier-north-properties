@@ -164,6 +164,56 @@ export async function updateProperty(
   };
 }
 
+export async function setPropertyCoverImage(
+  propertyId: string,
+  imagePath: string | null
+): Promise<{ success?: boolean; error?: string }> {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: 'Unauthorized. You must be signed in as an admin.' };
+  }
+
+  if (!propertyId) {
+    return { error: 'Missing property ID.' };
+  }
+
+  // 1. Confirm property existence and retrieve slug
+  const { data: property, error: fetchError } = await supabase
+    .from('properties')
+    .select('id, slug')
+    .eq('id', propertyId)
+    .single();
+
+  if (fetchError || !property) {
+    return { error: 'Property not found in database.' };
+  }
+
+  // 2. Update ONLY cover_image_path on properties table
+  const { error: updateError } = await supabase
+    .from('properties')
+    .update({ cover_image_path: imagePath })
+    .eq('id', propertyId);
+
+  if (updateError) {
+    return { error: `Failed to set cover image: ${updateError.message}` };
+  }
+
+  // 3. Revalidate affected cache paths
+  revalidatePath('/admin/properties');
+  revalidatePath(`/admin/properties/${propertyId}/edit`);
+  revalidatePath('/listings');
+  if (property.slug) {
+    revalidatePath(`/listings/${property.slug}`);
+  }
+  revalidatePath('/');
+
+  return { success: true };
+}
+
 const ALLOWED_MIME_TYPES = [
   'image/jpeg',
   'image/png',
@@ -328,7 +378,21 @@ export async function deletePropertyImage(
     return { error: `Failed to delete database record: ${dbError.message}` };
   }
 
-  // 4. Normalize sort order for remaining images
+  // 4. If this image was the cover_image_path, clear it
+  const { data: prop } = await supabase
+    .from('properties')
+    .select('cover_image_path')
+    .eq('id', propertyId)
+    .single();
+
+  if (prop?.cover_image_path === img.image_path) {
+    await supabase
+      .from('properties')
+      .update({ cover_image_path: null })
+      .eq('id', propertyId);
+  }
+
+  // 5. Normalize sort order for remaining images
   const { data: remaining } = await supabase
     .from('property_images')
     .select('id')
@@ -347,6 +411,8 @@ export async function deletePropertyImage(
 
   revalidatePath(`/admin/properties/${propertyId}/edit`);
   revalidatePath('/admin/properties');
+  revalidatePath('/listings');
+  revalidatePath('/');
   return { success: true };
 }
 

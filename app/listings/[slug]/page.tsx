@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import type { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
-import { getRelatedProperties, formatPrice, formatArea } from '@/lib/mockData';
+import { formatPrice, formatArea } from '@/lib/mockData';
 import Gallery from '@/components/listings/Gallery';
 
 export const dynamic = 'force-dynamic';
@@ -127,7 +127,7 @@ export default async function ListingDetailPage({ params }: ListingPageProps) {
     ? [...property.property_images].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
     : [];
 
-  // Build valid gallery images list without fake fallbacks
+  // Build valid gallery images list
   const gallery: { src: string; alt: string }[] = [];
 
   if (sortedImages.length > 0) {
@@ -151,7 +151,54 @@ export default async function ListingDetailPage({ params }: ListingPageProps) {
   }
 
   const statusDisplay = mapStatusDisplay(property.status || 'available');
-  const related = getRelatedProperties(params.slug, 3);
+
+  // Fetch up to 3 related published properties from Supabase (excluding current property)
+  const { data: rawRelated } = await supabase
+    .from('properties')
+    .select(`
+      id,
+      title,
+      slug,
+      location,
+      price,
+      cover_image_path,
+      published,
+      sort_order,
+      property_images (
+        id,
+        image_path,
+        alt,
+        sort_order
+      )
+    `)
+    .eq('published', true)
+    .neq('slug', params.slug)
+    .order('sort_order', { ascending: true })
+    .order('created_at', { ascending: false })
+    .limit(3);
+
+  const related = (rawRelated || []).map((item) => {
+    const sortedItemImages = Array.isArray(item.property_images)
+      ? [...item.property_images].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+      : [];
+    const primaryImg =
+      item.cover_image_path || (sortedItemImages.length > 0 ? sortedItemImages[0].image_path : null);
+    const coverUrl = resolveImageUrl(primaryImg, supabaseUrl);
+    const altText =
+      sortedItemImages.length > 0 && sortedItemImages[0].alt
+        ? sortedItemImages[0].alt
+        : item.title;
+
+    return {
+      id: item.id,
+      title: item.title,
+      slug: item.slug,
+      location: item.location,
+      price: item.price,
+      coverUrl,
+      altText,
+    };
+  });
 
   return (
     <div className="pt-[60px] md:pt-[72px] min-h-screen">
@@ -270,20 +317,28 @@ export default async function ListingDetailPage({ params }: ListingPageProps) {
             {related.map((item) => (
               <Link key={item.id} href={`/listings/${item.slug}`} className="group flex flex-col gap-4 cursor-pointer">
                 <div className="aspect-[4/3] w-full overflow-hidden border border-outline-variant relative bg-surface-dim">
-                  <Image
-                    src={item.cover_image}
-                    alt={item.cover_image_alt || item.title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    className="object-cover transition-transform duration-700 group-hover:scale-105 ease-out"
-                  />
+                  {item.coverUrl ? (
+                    <Image
+                      src={item.coverUrl}
+                      alt={item.altText}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover transition-transform duration-700 group-hover:scale-105 ease-out"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <span className="font-label-caps text-xs uppercase tracking-widest text-on-surface-variant">
+                        Photography in Preparation
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <div>
                   <h3 className="font-body-lg text-body-lg text-primary mb-1 group-hover:text-secondary transition-colors font-display">
                     {item.title}
                   </h3>
                   <p className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">
-                    {item.location} • {formatPrice(item.price, item.price_display)}
+                    {item.location} • {formatPrice(item.price)}
                   </p>
                 </div>
               </Link>
