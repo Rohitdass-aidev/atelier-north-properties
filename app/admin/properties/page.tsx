@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
+import PublishToggleButton from './PublishToggleButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -121,8 +122,8 @@ export default async function AdminPropertiesPage() {
                 <th className="py-4 px-6">Status</th>
                 <th className="py-4 px-6">Price</th>
                 <th className="py-4 px-6">Images</th>
-                <th className="py-4 px-6">State</th>
-                <th className="py-4 px-6 text-right">Action</th>
+                <th className="py-4 px-6">Publishing</th>
+                <th className="py-4 px-6 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-outline-variant font-body-md text-sm">
@@ -183,12 +184,19 @@ export default async function AdminPropertiesPage() {
                     </td>
 
                     <td className="py-4 px-6 text-right">
-                      <Link
-                        href={`/admin/properties/${property.id}/edit`}
-                        className="inline-block font-nav-link text-xs uppercase tracking-widest text-primary hover:text-secondary border-b border-primary hover:border-secondary pb-0.5 transition-colors"
-                      >
-                        Edit
-                      </Link>
+                      <div className="flex items-center justify-end gap-3">
+                        <PublishToggleButton
+                          propertyId={property.id}
+                          propertyTitle={property.title}
+                          isPublished={property.published}
+                        />
+                        <Link
+                          href={`/admin/properties/${property.id}/edit`}
+                          className="inline-block font-nav-link text-xs uppercase tracking-widest text-primary hover:text-secondary border-b border-primary hover:border-secondary pb-0.5 transition-colors"
+                        >
+                          Edit
+                        </Link>
+                      </div>
                     </td>
                   </tr>
                 );
